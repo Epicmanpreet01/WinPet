@@ -5,13 +5,14 @@ import core.config as config
 from tray.utils import open_folder, save_config
 from tray.sequence_utils import is_valid_sequence
 from core.exceptions import UnsupportedOSException
-
+import core.app_state as app_state
 
 def on_close(icon, item):
   save_config()
   icon.visible = False
   icon.stop()
 
+  app_state.quit_app()
 
 def on_directory_open(icon, item):
   try:
