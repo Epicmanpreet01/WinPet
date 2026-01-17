@@ -21,11 +21,12 @@ def on_directory_open(icon, item):
 
 
 def on_asset_click(icon, item):
-  if item.text == config.ACTIVE_SEQUENCE_NAME:
+  base = os.path.join(config.LIBRARY_PATH, item.text)
+
+  if not is_valid_sequence(base):
     return
 
-  base = os.path.join(config.LIBRARY_PATH, item.text)
-  if not is_valid_sequence(base):
+  if item.text == config.ACTIVE_SEQUENCE_NAME:
     return
 
   config.ACTIVE_SEQUENCE_NAME = item.text
@@ -51,18 +52,25 @@ def build_menu():
 
   asset_dirs = [
     name for name in os.listdir(config.LIBRARY_PATH)
-    if is_valid_sequence(os.path.join(config.LIBRARY_PATH, name))
+    if os.path.isdir(os.path.join(config.LIBRARY_PATH, name))
+    and not name.startswith('.')
   ] if os.path.isdir(config.LIBRARY_PATH) else []
 
-  asset_menu = [
-    MenuItem(
-      text=format_name(name),
-      action=on_asset_click,
-      checked=lambda item, name=name: name == config.ACTIVE_SEQUENCE_NAME,
-      radio=True
+  asset_menu = []
+
+  for name in sorted(asset_dirs, key=str.lower):
+    base = os.path.join(config.LIBRARY_PATH, name)
+    valid = is_valid_sequence(base)
+
+    asset_menu.append(
+      MenuItem(
+        text=format_name(name),
+        action=on_asset_click,
+        checked=lambda item, name=name: name == config.ACTIVE_SEQUENCE_NAME,
+        radio=True,
+        enabled=valid
+      )
     )
-    for name in sorted(asset_dirs, key=str.lower)
-  ]
 
   return Menu(
     MenuItem('Open Library Folder', on_directory_open),
@@ -70,7 +78,7 @@ def build_menu():
     MenuItem(
       f'Current Look: {config.ACTIVE_SEQUENCE_NAME or "None"}',
       Menu(*asset_menu) if asset_menu else Menu(
-        MenuItem('No Valid Looks Available', None, enabled=False)
+        MenuItem('No Looks Found', None, enabled=False)
       )
     ),
     Menu.SEPARATOR,
