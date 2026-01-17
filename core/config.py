@@ -1,6 +1,7 @@
 import os
 import platform
 import json
+from PySide6.QtCore import QSize
 
 
 DATA_DIR = 'data'
@@ -38,3 +39,7 @@ ACTIVE_SEQUENCE_PATH = (
   if isinstance(data.get('ACTIVE_SEQUENCE_PATH'), str)
   else ''
 )
+
+STANDARD_SIZE = QSize(256, 256)
+FPS = 12
+SEQUENCE_CHECK_INTERVAL_MS = 500

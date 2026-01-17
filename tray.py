@@ -1,10 +1,14 @@
 from pystray import Icon
 import threading
+from PySide6.QtWidgets import QApplication
+import sys
 
 from tray.utils import create_image, initialize_active_asset
 from tray.tray_helpers import build_menu
+
 import core.config as config
 from core.library_watcher import watch_library
+from companion.companion_window import Companion
 
 if __name__ == '__main__':
   initialize_active_asset()
@@ -27,4 +31,14 @@ if __name__ == '__main__':
   )
   watcher_thread.start()
 
-  icon.run()
+  icon.run_detached()
+
+  app = QApplication(sys.argv)
+  app.setQuitOnLastWindowClosed(False)
+
+  window = Companion()
+  window.show()
+
+  sys.exit(app.exec())
+  
+  
