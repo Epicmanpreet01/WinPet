@@ -1,6 +1,5 @@
 import os
 import time
-import threading
 import core.config as config
 from tray.tray_helpers import build_menu
 
@@ -11,20 +10,11 @@ def get_library_snapshot():
   if not os.path.isdir(config.LIBRARY_PATH):
     return set()
 
-  snapshot = set()
-
-  for name in os.listdir(config.LIBRARY_PATH):
-    base = os.path.join(config.LIBRARY_PATH, name)
-    if not os.path.isdir(base) or name.startswith('.'):
-      continue
-
-    snapshot.add((
-      name,
-      os.path.isdir(os.path.join(base, 'idle')),
-      os.path.isdir(os.path.join(base, 'picked'))
-    ))
-
-  return snapshot
+  return {
+    name
+    for name in os.listdir(config.LIBRARY_PATH)
+    if os.path.isdir(os.path.join(config.LIBRARY_PATH, name))
+  }
 
 
 def watch_library(icon):
