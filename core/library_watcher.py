@@ -11,18 +11,26 @@ def get_library_snapshot():
   if not os.path.isdir(config.LIBRARY_PATH):
     return set()
 
-  return {
-    name
-    for name in os.listdir(config.LIBRARY_PATH)
-    if os.path.isdir(os.path.join(config.LIBRARY_PATH, name))
-    and not name.startswith('.')
-  }
+  snapshot = set()
+
+  for name in os.listdir(config.LIBRARY_PATH):
+    base = os.path.join(config.LIBRARY_PATH, name)
+    if not os.path.isdir(base) or name.startswith('.'):
+      continue
+
+    snapshot.add((
+      name,
+      os.path.isdir(os.path.join(base, 'idle')),
+      os.path.isdir(os.path.join(base, 'picked'))
+    ))
+
+  return snapshot
 
 
 def watch_library(icon):
   last_snapshot = get_library_snapshot()
 
-  while True:
+  while icon.visible:
     time.sleep(CHECK_INTERVAL)
     current_snapshot = get_library_snapshot()
 

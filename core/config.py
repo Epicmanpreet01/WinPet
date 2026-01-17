@@ -2,6 +2,7 @@ import os
 import platform
 import json
 
+
 DATA_DIR = 'data'
 LIBRARY_DIR = 'assets/library'
 CONFIG_FILE = os.path.join(DATA_DIR, 'config.json')
