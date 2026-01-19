@@ -2,10 +2,10 @@ import os
 import platform
 import json
 from PySide6.QtCore import QSize
+from core.utils import resource_path
 
-
-DATA_DIR = 'data'
-LIBRARY_DIR = 'assets/library'
+DATA_DIR = resource_path('data')
+LIBRARY_DIR = resource_path('assets/library')
 CONFIG_FILE = os.path.join(DATA_DIR, 'config.json')
 
 os.makedirs(DATA_DIR, exist_ok=True)

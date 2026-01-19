@@ -3,7 +3,7 @@ import threading
 from PySide6.QtWidgets import QApplication
 import sys
 
-from tray.utils import create_image, initialize_active_asset
+from tray.utils import create_image,load_icon, initialize_active_asset
 from tray.tray_helpers import build_menu
 import core.config as config
 from core.library_watcher import watch_library
@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
   icon = Icon(
     name='WinPet',
-    icon=create_image(60, 60, 'black', 'white'),
+    icon=load_icon('assets/icon.ico'),
     title=f"WinPet – {config.ACTIVE_SEQUENCE_NAME}" if config.ACTIVE_SEQUENCE_NAME else "WinPet",
     menu=build_menu()
   )

@@ -27,6 +27,12 @@ def create_image(width, height, col1, col2):
   draw.rectangle((0, height // 2, width, height), fill=col2)
   return image
 
+def load_icon(path):
+  if not os.path.exists(path):
+    return create_image(60,60, 'Black', 'White')
+  
+  image = Image.open(path).resize((60,60))
+  return image
 
 def initialize_active_asset():
   if not os.path.isdir(config.LIBRARY_PATH):

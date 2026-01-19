@@ -4,3 +4,6 @@ next_steps.md
 prototyping
 assets/library/
 data/
+dist
+build
+*.spec
