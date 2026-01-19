@@ -28,6 +28,13 @@ The application is designed to be simple for users while remaining easy to exten
 
 ---
 
+## Download
+
+Download the latest Windows executable from the
+[GitHub Releases](https://github.com/<your-username>/<repo-name>/releases) page.
+
+---
+
 # User Guide
 
 ## Getting Started
