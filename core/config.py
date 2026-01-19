@@ -2,10 +2,17 @@ import os
 import platform
 import json
 from PySide6.QtCore import QSize
-from core.utils import resource_path
 
-DATA_DIR = resource_path('data')
-LIBRARY_DIR = resource_path('assets/library')
+APP_NAME = 'WinPet'
+
+if platform.system() == 'Windows':
+    BASE_DIR = os.path.join(os.environ['APPDATA'], APP_NAME)
+else:
+    BASE_DIR = os.path.join(os.path.expanduser('~'), f'.{APP_NAME.lower()}')
+
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+LIBRARY_DIR = os.path.join(BASE_DIR, 'library')
+
 CONFIG_FILE = os.path.join(DATA_DIR, 'config.json')
 
 os.makedirs(DATA_DIR, exist_ok=True)

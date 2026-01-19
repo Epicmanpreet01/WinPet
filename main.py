@@ -16,7 +16,7 @@ if __name__ == '__main__':
   icon = Icon(
     name='WinPet',
     icon=load_icon('assets/icon.ico'),
-    title=f"WinPet – {config.ACTIVE_SEQUENCE_NAME}" if config.ACTIVE_SEQUENCE_NAME else "WinPet",
+    title="WinPet",
     menu=build_menu()
   )
 

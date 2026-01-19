@@ -60,8 +60,6 @@ def on_asset_click(icon, item):
   with icon.update_menu():
     icon.menu = build_menu()
 
-  icon.title = f"WinPet – {config.ACTIVE_SEQUENCE_NAME}"
-
 
 
 def on_reload_library(icon, item):
@@ -100,7 +98,7 @@ def build_menu():
     MenuItem('Open Library Folder', on_directory_open),
     Menu.SEPARATOR,
     MenuItem(
-      f'Current Look: {config.ACTIVE_SEQUENCE_NAME or "None"}',
+      f'Current Look',
       Menu(*asset_menu) if asset_menu else Menu(
         MenuItem('No Looks Found', None, enabled=False)
       )

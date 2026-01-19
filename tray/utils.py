@@ -72,7 +72,11 @@ def initialize_active_asset():
 
 
 def save_config():
-  tmp_file = 'data/config.json.tmp'
+  os.makedirs(config.DATA_DIR, exist_ok=True)
+
+  tmp_file = os.path.join(config.DATA_DIR, 'config.json.tmp')
+  final_file = os.path.join(config.DATA_DIR, 'config.json')
+
   with open(tmp_file, 'w', encoding='utf-8') as f:
     json.dump(
       {
@@ -82,4 +86,5 @@ def save_config():
       f,
       indent=2
     )
-  os.replace(tmp_file, 'data/config.json')
+
+  os.replace(tmp_file, final_file)
