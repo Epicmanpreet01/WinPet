@@ -219,5 +219,9 @@ dist/WinPet.exe
 
 ## License
 
-Add a license file if you plan to distribute publicly.
+This project is licensed under the MIT License with the Commons Clause.
+
+- Non-commercial use, modification, and redistribution are permitted
+- Commercial resale or paid distribution is not permitted
+- Attribution to the original author is required
 
