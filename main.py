@@ -12,6 +12,7 @@ import core.app_state as app_state
 from core.startup import add_to_startup
 from tray.utils import save_config
 
+
 if __name__ == '__main__':
   initialize_active_asset()
   if not config.STARTUP_ENABLED:
@@ -21,7 +22,6 @@ if __name__ == '__main__':
       save_config()
     except Exception:
       pass
-
 
   icon = Icon(
     name='WinPet',

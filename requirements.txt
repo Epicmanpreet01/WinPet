@@ -1,5 +1,3 @@
 pystray
 PySide6
 pillow
-pywin32
-winshell
