@@ -81,7 +81,8 @@ def save_config():
     json.dump(
       {
         'ACTIVE_SEQUENCE_NAME': config.ACTIVE_SEQUENCE_NAME,
-        'ACTIVE_SEQUENCE_PATH': config.ACTIVE_SEQUENCE_PATH
+        'ACTIVE_SEQUENCE_PATH': config.ACTIVE_SEQUENCE_PATH,
+        'STARTUP_ENABLED': config.STARTUP_ENABLED
       },
       f,
       indent=2
