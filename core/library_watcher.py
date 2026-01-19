@@ -3,6 +3,7 @@ import time
 import core.config as config
 from tray.tray_helpers import build_menu
 from tray.sequence_utils import is_valid_sequence
+import core.app_state as app_state
 
 CHECK_INTERVAL = 2.0
 
@@ -29,7 +30,7 @@ def get_library_snapshot():
 def watch_library(icon):
   last_snapshot = get_library_snapshot()
 
-  while icon.visible:
+  while icon.visible and not app_state.is_quitting:
     time.sleep(CHECK_INTERVAL)
     current_snapshot = get_library_snapshot()
 

@@ -5,6 +5,7 @@ import os
 import core.config as config
 from core.exceptions import UnsupportedOSException
 from tray.sequence_utils import is_valid_sequence
+from core.utils import resource_path
 
 
 def open_folder(folder):
@@ -28,10 +29,12 @@ def create_image(width, height, col1, col2):
   return image
 
 def load_icon(path):
-  if not os.path.exists(path):
-    return create_image(60,60, 'Black', 'White')
-  
-  image = Image.open(path).resize((60,60))
+  real_path = resource_path(path)
+
+  if not os.path.exists(real_path):
+    return create_image(60, 60, 'black', 'white')
+
+  image = Image.open(real_path).resize((60, 60))
   return image
 
 def initialize_active_asset():

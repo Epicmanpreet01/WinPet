@@ -7,12 +7,30 @@ from tray.sequence_utils import is_valid_sequence
 from core.exceptions import UnsupportedOSException
 import core.app_state as app_state
 
-def on_close(icon, item):
-  save_config()
-  icon.visible = False
-  icon.stop()
+def format_name(name, max_len=20):
+  return name if len(name) <= max_len else name[:17] + '...'
 
-  app_state.quit_app()
+def on_close(icon, item):
+  app_state.is_quitting = True
+  try:
+    save_config()
+  except Exception:
+    pass
+
+  try:
+    icon.visible = False
+    icon.stop()
+  except Exception:
+    pass
+
+  try:
+    app_state.quit_app()
+  except Exception:
+    pass
+
+  import os
+  os._exit(0)
+
 
 def on_directory_open(icon, item):
   try:
@@ -22,20 +40,28 @@ def on_directory_open(icon, item):
 
 
 def on_asset_click(icon, item):
-  base = os.path.join(config.LIBRARY_PATH, item.text)
+  real_name = next(
+    name for name in os.listdir(config.LIBRARY_PATH)
+    if format_name(name) == item.text
+  )
+
+  base = os.path.join(config.LIBRARY_PATH, real_name)
 
   if not is_valid_sequence(base):
     return
 
-  if item.text == config.ACTIVE_SEQUENCE_NAME:
+  if real_name == config.ACTIVE_SEQUENCE_NAME:
     return
 
-  config.ACTIVE_SEQUENCE_NAME = item.text
+  config.ACTIVE_SEQUENCE_NAME = real_name
   config.ACTIVE_SEQUENCE_PATH = base
   save_config()
 
-  icon.menu = build_menu()
+  with icon.update_menu():
+    icon.menu = build_menu()
+
   icon.title = f"WinPet – {config.ACTIVE_SEQUENCE_NAME}"
+
 
 
 def on_reload_library(icon, item):
@@ -48,9 +74,6 @@ def on_reload_library(icon, item):
 
 
 def build_menu():
-  def format_name(name, max_len=20):
-    return name if len(name) <= max_len else name[:17] + '...'
-
   asset_dirs = [
     name for name in os.listdir(config.LIBRARY_PATH)
     if os.path.isdir(os.path.join(config.LIBRARY_PATH, name))
@@ -67,7 +90,7 @@ def build_menu():
       MenuItem(
         text=format_name(name),
         action=on_asset_click,
-        checked=lambda item, name=name: name == config.ACTIVE_SEQUENCE_NAME,
+        checked=lambda item, real=name: real == config.ACTIVE_SEQUENCE_NAME,
         radio=True,
         enabled=valid
       )
