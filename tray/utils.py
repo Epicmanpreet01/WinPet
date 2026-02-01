@@ -82,7 +82,10 @@ def save_config():
       {
         'ACTIVE_SEQUENCE_NAME': config.ACTIVE_SEQUENCE_NAME,
         'ACTIVE_SEQUENCE_PATH': config.ACTIVE_SEQUENCE_PATH,
-        'STARTUP_ENABLED': config.STARTUP_ENABLED
+        'STARTUP_ENABLED': config.STARTUP_ENABLED,
+        'SIZE': config.SIZE,
+        'FPS': config.FPS,
+        'COMPANION_ENABLED': config.COMPANION_ENABLED,
       },
       f,
       indent=2

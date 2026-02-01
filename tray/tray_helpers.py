@@ -6,6 +6,9 @@ from tray.utils import open_folder, save_config
 from tray.sequence_utils import is_valid_sequence
 from core.exceptions import UnsupportedOSException
 import core.app_state as app_state
+from core.qt_bridge import qt_bridge
+
+FPS_OPTIONS = [12, 24, 30, 60]
 
 def format_name(name, max_len=20):
   return name if len(name) <= max_len else name[:17] + '...'
@@ -31,13 +34,21 @@ def on_close(icon, item):
   import os
   os._exit(0)
 
+def on_fps_change(icon, item):
+  config.FPS = int(item.text)
+  save_config()
+  qt_bridge.fps_changed.emit()
+
+def on_toggle_companion(icon, item):
+  config.COMPANION_ENABLED = not config.COMPANION_ENABLED
+  save_config()
+  qt_bridge.companion_toggled.emit()
 
 def on_directory_open(icon, item):
   try:
     open_folder(config.LIBRARY_PATH)
   except UnsupportedOSException:
     pass
-
 
 def on_asset_click(icon, item):
   real_name = next(
@@ -57,10 +68,9 @@ def on_asset_click(icon, item):
   config.ACTIVE_SEQUENCE_PATH = base
   save_config()
 
-  with icon.update_menu():
-    icon.menu = build_menu()
-
-
+  icon.menu = build_menu()
+  icon.visible = False
+  icon.visible = True
 
 def on_reload_library(icon, item):
   from tray.utils import initialize_active_asset
@@ -69,7 +79,6 @@ def on_reload_library(icon, item):
   icon.menu = build_menu()
   icon.visible = False
   icon.visible = True
-
 
 def build_menu():
   asset_dirs = [
@@ -94,17 +103,41 @@ def build_menu():
       )
     )
 
+    fps_menu = Menu(
+      *[
+        MenuItem(
+          text=str(fps),
+          action=on_fps_change,
+          checked=lambda item, f=fps: config.FPS == f,
+          radio=True
+        )
+        for fps in FPS_OPTIONS
+      ]
+    )
+
   return Menu(
     MenuItem('Open Library Folder', on_directory_open),
     Menu.SEPARATOR,
+
+    MenuItem(
+      'Companion Enabled',
+      on_toggle_companion,
+      checked=lambda item: config.COMPANION_ENABLED
+    ),
+
+    MenuItem('Animation FPS', fps_menu),
+
+    Menu.SEPARATOR,
+
     MenuItem(
       f'Current Look',
       Menu(*asset_menu) if asset_menu else Menu(
         MenuItem('No Looks Found', None, enabled=False)
       )
     ),
+
     Menu.SEPARATOR,
-    MenuItem('Refresh Looks', on_reload_library, enabled=True),
+    MenuItem('Refresh Looks', on_reload_library),
     Menu.SEPARATOR,
     MenuItem('Quit WinPet', on_close)
   )

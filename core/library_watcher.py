@@ -40,8 +40,6 @@ def watch_library(icon):
       from tray.utils import initialize_active_asset
       initialize_active_asset()
 
-      with icon.update_menu():
-        icon.menu = build_menu()
-
+      icon.menu = build_menu()
       icon.visible = False
       icon.visible = True
