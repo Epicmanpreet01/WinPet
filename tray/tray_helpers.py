@@ -1,5 +1,6 @@
 import os
 from pystray import Menu, MenuItem
+from PySide6.QtCore import QSize
 
 import core.config as config
 from tray.utils import open_folder, save_config
@@ -9,6 +10,20 @@ import core.app_state as app_state
 from core.qt_bridge import qt_bridge
 
 FPS_OPTIONS = [12, 24, 30, 60]
+SIZE_OPTIONS = [128, 192, 256, 320, 384, 448]
+
+def on_size_change(icon, item):
+  size = int(item.text)
+
+  if config.SIZE == size:
+    return
+
+  config.SIZE = size
+  config.STANDARD_SIZE = QSize(size, size)
+  save_config()
+
+  qt_bridge.size_changed.emit()
+
 
 def format_name(name, max_len=20):
   return name if len(name) <= max_len else name[:17] + '...'
@@ -38,6 +53,7 @@ def on_fps_change(icon, item):
   config.FPS = int(item.text)
   save_config()
   qt_bridge.fps_changed.emit()
+
 
 def on_toggle_companion(icon, item):
   config.COMPANION_ENABLED = not config.COMPANION_ENABLED
@@ -115,6 +131,18 @@ def build_menu():
       ]
     )
 
+    size_menu = Menu(
+      *[
+        MenuItem(
+          text=str(size),
+          action=on_size_change,
+          checked=lambda item, s=size: config.SIZE == s,
+          radio=True
+        )
+        for size in SIZE_OPTIONS
+      ]
+    )
+
   return Menu(
     MenuItem('Open Library Folder', on_directory_open),
     Menu.SEPARATOR,
@@ -126,11 +154,11 @@ def build_menu():
     ),
 
     MenuItem('Animation FPS', fps_menu),
+    MenuItem('Companion Size', size_menu),
 
     Menu.SEPARATOR,
-
     MenuItem(
-      f'Current Look',
+      'Current Look',
       Menu(*asset_menu) if asset_menu else Menu(
         MenuItem('No Looks Found', None, enabled=False)
       )
