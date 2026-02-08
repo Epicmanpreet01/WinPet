@@ -1,37 +1,48 @@
 # WinPet
 
 WinPet is a lightweight Windows desktop companion application.
-It displays an animated character that lives on your desktop, stays on top of other windows, and can be freely moved and customized through a system tray interface.
 
-The application is designed to be simple for users while remaining easy to extend and modify for developers.
+It displays an animated character that lives on your desktop, stays on top of other windows, reacts to user interaction, and idles with time-based behaviors.
+All interaction and configuration is handled through a system tray interface.
+
+WinPet is designed to be:
+
+- Simple and intuitive for users
+- Easy to extend and maintain for developers
 
 ---
 
-## Features
+## Key Highlights
 
-* Animated desktop companion rendered using Qt (PySide6)
-* Always-on-top, frameless window
-* Smooth frame-based animation
-* Click-and-drag movement
-* Multiple companion “looks” (animation sets)
-* Live switching between looks
-* Automatic detection of newly added companions
-* System tray menu for all controls
-* Persistent configuration between launches
-* Fully packaged standalone Windows executable
+- Animated desktop companion (desktop pet)
+- Frameless, always-on-top window
+- Smooth frame-based animations
+- Click-and-drag interaction with physics
+- Multiple companion looks (animation sets)
+- Live look switching without restart
+- Automatic detection of new companions
+- Time-based idle behavior system
+- State-driven animation engine
+- Persistent configuration
+- Standalone Windows executable (no Python required)
 
 ---
 
 ## System Requirements
 
-* Windows 10 or newer
+- Windows 10 or newer
 
 ---
 
 ## Download
 
-Download the latest Windows executable from the
-[GitHub Releases](https://github.com/<your-username>/<repo-name>/releases) page.
+Download the latest Windows executable from the GitHub Releases page:
+
+```
+https://github.com/<your-username>/<repo-name>/releases
+```
+
+No installation is required. Simply run the executable.
 
 ---
 
@@ -41,18 +52,50 @@ Download the latest Windows executable from the
 
 1. Download `WinPet.exe`
 2. Run the executable
-3. The companion appears on your desktop
+3. A companion appears on your desktop
 4. A tray icon appears in the system tray
 
-WinPet runs in the background and does not display a console window.
+WinPet runs quietly in the background and does not open a console window.
 
 ---
 
 ## Interacting with the Companion
 
-* **Move:** Click and drag the companion anywhere on the screen
-* **Pick up state:** While dragging, the companion switches to a “picked” animation
-* **Idle state:** When released, the companion returns to idle animation
+### Move / Drag
+
+- Click and drag the companion anywhere on the screen
+- While dragging, the companion switches to the `picked` animation state
+
+### Release
+
+- Releasing the mouse drops the companion
+- The companion smoothly returns to idle behavior
+
+---
+
+## Idle Behavior System
+
+WinPet supports time-based idle states.
+
+When the companion is not interacted with, it automatically transitions through idle animations based on how long it has been left alone.
+
+### Default Idle States
+
+| State Name    | Description                          |
+| ------------- | ------------------------------------ |
+| `idle`        | Default idle animation               |
+| `idle_medium` | Triggered after a short idle period  |
+| `idle_long`   | Triggered after a longer idle period |
+
+### Behavior Rules
+
+- Idle states transition automatically over time
+- `idle_long` can repeat multiple times before resetting
+- All states are optional except `idle`
+- If a state folder does not exist, it is skipped automatically
+- User interaction instantly resets the idle cycle
+
+This system allows companions to feel more dynamic and alive without requiring configuration.
 
 ---
 
@@ -68,15 +111,17 @@ The companion updates immediately.
 
 ---
 
-### Adding New Looks
+### Adding New Companion Looks
 
 1. Right-click the tray icon
 2. Select **Open Library Folder**
 3. Create a new folder for the companion
 4. Add animation frames following the required format
-5. Use **Refresh Looks** from the tray menu
+5. Select **Refresh Looks** from the tray menu
 
-### Companion Folder Format
+---
+
+### Companion Folder Structure
 
 ```
 CompanionName/
@@ -84,83 +129,125 @@ CompanionName/
 │  ├─ 0.png
 │  ├─ 1.png
 │  └─ ...
+├─ idle_medium/        (optional)
+│  ├─ 0.png
+│  └─ ...
+├─ idle_long/          (optional)
+│  ├─ 0.png
+│  └─ ...
 └─ picked/
    ├─ 0.png
    ├─ 1.png
    └─ ...
 ```
 
-### Requirements
+---
 
-* Filenames must be numeric and sequential
-* Supported image formats: `.png`, `.jpg`, `.jpeg`
-* Both `idle` and `picked` folders must exist
-* Invalid companions are ignored automatically
+### Companion Rules
+
+- Filenames must be numeric and sequential
+- Supported image formats:
+  - `.png`
+  - `.jpg`
+  - `.jpeg`
+
+- The `idle` folder is required
+- All other state folders are optional
+- Invalid companions are ignored automatically
 
 ---
 
-### Removing Looks
+### Removing Companion Looks
 
-* Delete the companion’s folder from the library
-* Use **Refresh Looks** to update the menu
+- Delete the companion folder from the library
+- Use **Refresh Looks** from the tray menu
 
 ---
 
-## Closing the Application
+## Closing WinPet
 
-* Right-click the tray icon
-* Select **Quit WinPet**
+1. Right-click the tray icon
+2. Select **Quit WinPet**
 
-The application exits fully and leaves no background processes running.
+The application exits cleanly and leaves no background processes running.
 
 ---
 
 # Developer Guide
 
-## Overview
+## Architecture Overview
 
-WinPet is built around three core systems:
-
-1. **Companion Window**
-
-   * Frameless Qt window
-   * Renders animation frames using QPixmap
-   * Handles user interaction and movement
-
-2. **System Tray Controller**
-
-   * Built with pystray
-   * Provides menu-based controls
-   * Manages look switching and shutdown
-
-3. **Library & Configuration System**
-
-   * Companion looks stored as folders
-   * Active look stored in a JSON config file
-   * Automatic detection of library changes
+WinPet is built around three main systems.
 
 ---
 
-## Animation System
+### Companion Window
 
-* Frames are loaded as QPixmaps
-* Animations are driven by a timer at a configurable FPS
-* Frame order is determined by numeric filenames
-* Separate animation sequences for idle and picked states
-
----
-
-## Configuration
-
-* Configuration is stored in `config.json`
-* Stores the active companion name and path
-* Loaded at startup and saved on changes or exit
+- Frameless `QWidget`
+- Always-on-top
+- Transparent background
+- Renders animations using `QPixmap`
+- Handles:
+  - user input
+  - movement
+  - physics
+  - animation state transitions
 
 ---
 
-## File Locations (Runtime)
+### Animation and State System
 
-At runtime, WinPet creates and uses:
+WinPet uses a state-driven animation model.
+
+Each animation state corresponds to a folder on disk.
+
+#### Built-in States
+
+| State         | Purpose                         |
+| ------------- | ------------------------------- |
+| `idle`        | Default idle animation          |
+| `idle_medium` | Medium idle duration            |
+| `idle_long`   | Long idle duration (repeatable) |
+| `picked`      | Active while dragging           |
+
+#### Key Properties
+
+- States are discovered dynamically
+- No hardcoded assumptions about available states
+- Missing states are skipped safely
+- Active states are protected from accidental overrides
+- Time-based transitions are handled by a scheduler
+
+This design allows new states to be added without modifying core logic.
+
+---
+
+### System Tray Controller
+
+- Built with `pystray`
+- Provides:
+  - look switching
+  - size control
+  - FPS control
+  - enable or disable toggle
+  - graceful shutdown
+
+- Tray menu updates live when the library changes
+
+---
+
+### Library and Configuration System
+
+- Companion assets are stored as folders
+- Active companion data is saved in `config.json`
+- Configuration persists across restarts
+- The companion library is monitored and refreshed automatically
+
+---
+
+## Runtime File Locations
+
+At runtime, WinPet creates and manages the following structure:
 
 ```
 WinPet/
@@ -171,34 +258,34 @@ WinPet/
    └─ CompanionB/
 ```
 
-The exact base location depends on the system, but the application manages this automatically.
+The base directory is platform-appropriate and managed automatically.
 
 ---
 
 ## Project Structure
 
 ```
-WindowPet/
+WinPet/
 ├─ assets/         # Bundled application assets
 ├─ companion/      # Companion window and animation logic
-├─ core/           # App state, config, utilities
-├─ tray/           # Tray menu and helpers
+├─ core/           # Configuration, state, and utilities
+├─ tray/           # System tray menu and helpers
 ├─ main.py         # Application entry point
-├─ WinPet.spec     # PyInstaller build file
+├─ WinPet.spec     # PyInstaller build configuration
 ├─ requirements.txt
 └─ README.md
 ```
 
 ---
 
-## Running from Source
+## Running From Source
 
 ### Requirements
 
-* Python 3.10+
-* Windows
+- Python 3.10 or newer
+- Windows
 
-### Setup
+### Run
 
 ```bash
 pip install -r requirements.txt
@@ -216,11 +303,27 @@ pip install pyinstaller
 pyinstaller WinPet.spec --clean
 ```
 
-The executable will be generated in:
+The executable will be generated at:
 
 ```
 dist/WinPet.exe
 ```
+
+---
+
+## Extending WinPet
+
+WinPet is designed with extensibility in mind.
+
+Common extensions include:
+
+- Adding new animation states
+- Creating custom idle behavior rules
+- Adding metadata per companion
+- Modifying physics behavior
+- Implementing emotion or context-based states
+
+The animation and state system requires no refactoring to support new states.
 
 ---
 
@@ -231,4 +334,3 @@ This project is licensed under the MIT License with the Commons Clause.
 - Non-commercial use, modification, and redistribution are permitted
 - Commercial resale or paid distribution is not permitted
 - Attribution to the original author is required
-
