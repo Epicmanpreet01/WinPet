@@ -36,12 +36,7 @@ WinPet is designed to be:
 
 ## Download
 
-Download the latest Windows executable from the GitHub Releases page:
-
-```
-https://github.com/<your-username>/<repo-name>/releases
-```
-
+Download the latest Windows executable from the GitHub Releases page
 No installation is required. Simply run the executable.
 
 ---
