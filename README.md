@@ -319,7 +319,6 @@ Common extensions include:
 - Implementing emotion or context-based states
 
 The animation and state system requires no refactoring to support new states.
-
 ---
 
 ## License
